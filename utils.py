@@ -452,13 +452,37 @@ def build_block_adapter(
         
         pattern = get_forward_pattern(forward_pattern)
         
-        # For ComfyUI custom models (non-diffusers), disable forward pattern checking
-        # and work directly with the transformer without pipeline wrapping
+        # For ComfyUI custom models (non-diffusers), manually construct BlockAdapter
+        # Extract transformer blocks manually to avoid pipeline detection
+        if auto_detect:
+            # Auto-detect blocks from transformer
+            blocks = []
+            for name, module in transformer.named_children():
+                # Common block names in DiT models
+                if any(keyword in name.lower() for keyword in ['block', 'layer', 'transformer_block']):
+                    blocks.append(module)
+            
+            if not blocks:
+                # Fallback: try to find blocks in nested structures
+                for module in transformer.modules():
+                    if hasattr(module, '__iter__') and not isinstance(module, torch.nn.Sequential):
+                        continue
+                    if isinstance(module, (torch.nn.ModuleList, torch.nn.Sequential)):
+                        blocks = list(module)
+                        break
+        
+            if blocks:
+                adapter = BlockAdapter(
+                    blocks=blocks,
+                    forward_pattern=pattern,
+                )
+                return adapter
+        
+        # If auto-detect failed or not requested, try direct constructor
         adapter = BlockAdapter(
             transformer=transformer,
             forward_pattern=pattern,
             auto=auto_detect,
-            check_forward_pattern=False,  # Disable for non-diffusers models
         )
         
         return adapter
