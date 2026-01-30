@@ -159,8 +159,6 @@ Other DiT models should work with auto-detection, but may need manual preset sel
 
 <div align="center">
 
-**Made with ⚡ for the ComfyUI community**
-
 Star ⭐ this repo if you find it useful!
 
 </div>
