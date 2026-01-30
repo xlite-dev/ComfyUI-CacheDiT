@@ -33,8 +33,7 @@ ComfyUI-CacheDiT brings **1.4-1.6x speedup** to DiT (Diffusion Transformer) mode
 ### Prerequisites
 
 ```bash
-# Install cache-dit library (v1.2.0+)
-pip install cache-dit>=1.2.0
+pip install -r requirements.txt
 ```
 
 ### Install Node
