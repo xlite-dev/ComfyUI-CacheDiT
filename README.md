@@ -13,6 +13,7 @@
 ---
 
 <a name="english"></a>
+Unique cloners in last 14 days
 ## Overview
 
 ComfyUI-CacheDiT brings **1.4-1.6x speedup** to DiT (Diffusion Transformer) models through intelligent residual caching, with **zero configuration required**.
@@ -117,18 +118,6 @@ else:
 - ✅ LTX-2 I2V (Image-to-Video, 20 steps)
 
 Other DiT models should work with auto-detection, but may need manual preset selection.
-
-### Q: Why is speedup "only" 1.5x?
-
-**A:** This is actually excellent! Here's why:
-- **1.5x = 33% cache hit rate** - safely caching 1 out of 3 steps
-- Higher speedup (2x+) risks quality degradation
-- Conservative caching maintains generation quality
-- Real-world speedup matches reference implementation
-
-### Q: Can I get more speedup?
-
-**A:** Currently, parameters are optimized for quality-speed balance. Future updates may add "aggressive mode" for users willing to accept potential quality trade-offs.
 
 ### Q: What if auto-detection fails?
 
