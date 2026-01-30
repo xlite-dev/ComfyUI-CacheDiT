@@ -129,6 +129,25 @@ MODEL_PRESETS: Dict[str, ModelPreset] = {
     # =========================================================================
     # LTX-2 Video Series
     # =========================================================================
+    # LTX-2 is an Audio-Visual Transformer that processes dual latent paths:
+    #   - Video latents (hidden_states)
+    #   - Audio latents (audio_hidden_states)
+    # 
+    # Block Architecture:
+    #   Input:  (hidden_states, audio_hidden_states, encoder_hidden_states, audio_encoder_hidden_states)
+    #   Output: (hidden_states, audio_hidden_states)
+    #
+    # cache-dit Integration:
+    #   - Uses Pattern_1 which expects: In=(h,enc_h), Out=(enc_h,h)
+    #   - LTX-2's audio_hidden_states is mapped to Pattern_1's "second output" (enc_h position)
+    #   - This creates a semantic mismatch: cache-dit treats audio_h as encoder_h
+    #   - Official cache-dit uses functor_ltx2.py to patch transformer.forward and reorder block args
+    #   - ComfyUI lightweight cache bypasses this by caching full transformer output
+    #
+    # Pipeline Types:
+    #   - T2V: Text-to-Video (diffusers.LTX2Pipeline)
+    #   - I2V: Image-to-Video (diffusers.LTX2ImageToVideoPipeline)
+    #   - Official serving uses CACHE_DIT_LTX2_PIPELINE env var to switch pipelines
     "LTX-2-T2V": ModelPreset(
         name="LTX-2-T2V",
         description="LTX-2 Text-to-Video (temporal consistency)",
@@ -200,7 +219,8 @@ def get_all_preset_names() -> List[str]:
 
 PATTERN_DESCRIPTIONS = {
     "Pattern_0": "Return_H_First=True, In=(h,enc_h), Out=(h,enc_h) - Flux style",
-    "Pattern_1": "Return_H_First=False, In=(h,enc_h), Out=(enc_h,h) - Qwen/LTX/Z-Image",
+    "Pattern_1": "Return_H_First=False, In=(h,enc_h), Out=(enc_h,h) - Qwen/LTX/Z-Image\n"
+                 "               LTX-2: audio_h mapped as 'second output' in Pattern_1 abstraction",
     "Pattern_2": "Return_H_Only=True, In=(h,enc_h), Out=(h,) - Single output",
     "Pattern_3": "Forward_H_only=True, In=(h,), Out=(h,) - Hunyuan/Wan",
     "Pattern_4": "Return_H_First=True, In=(h,), Out=(h,enc_h) - Special",
@@ -417,6 +437,10 @@ def _manual_extract_blocks(transformer: torch.nn.Module) -> Optional[List[torch.
     
     # Strategy 3: LTX-2 / HunyuanVideo / Standard DiT
     # These models typically have .blocks or .transformer_blocks
+    # LTX-2 note: Uses standard .transformer_blocks attribute
+    # - Each block is an LTX2TransformerBlock that handles dual-path processing
+    # - Block forward: (h, audio_h, enc_h, audio_enc_h) -> (h, audio_h)
+    # - Extracted blocks are used by lightweight cache (not BlockAdapter due to signature mismatch)
     for attr_name in ['blocks', 'transformer_blocks', 'dit_blocks']:
         if hasattr(transformer, attr_name):
             attr_blocks = getattr(transformer, attr_name)
