@@ -1,6 +1,7 @@
-# ComfyUI-CacheDiT ⚡
 
 <div align="center">
+
+# ComfyUI-CacheDiT ⚡
 
 **One-Click DiT Model Acceleration for ComfyUI**
 
