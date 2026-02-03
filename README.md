@@ -1,6 +1,7 @@
-# ComfyUI-CacheDiT ⚡
 
 <div align="center">
+
+# ComfyUI-CacheDiT ⚡
 
 **One-Click DiT Model Acceleration for ComfyUI**
 
@@ -21,15 +22,19 @@ ComfyUI-CacheDiT brings **1.4-1.6x speedup** to DiT (Diffusion Transformer) mode
 
 ### Tested & Verified Models
 
-| Model | Steps | Speedup | Warmup | Skip_interval |
-|-------|-------|---------|---------|--------|
-| **Z-Image** | 50 | 1.3x | 12 | 5 |
-| **Z-Image-Turbo** | 9 | 1.5x | 3 | 2 |
-| **Qwen-Image-2512** | 50 | 1.4-1.6x | 5 | 3 |
-| **LTX-2 T2V** | 20 | 2.0x | 6 | 4 |
-| **LTX-2 I2V** | 20 | 2.0x | 6 | 4 |
-| **WAN2.2 14B T2V** | 20 | 1.67x | 4 | 2 |
-| **WAN2.2 14B I2V** | 20 | 1.67x | 4 | 2 |
+<div align="center">
+
+| Model | Steps | Speedup | Status | Warmup | Skip_interval |
+|-------|-------|---------|--------|---------|--------|
+| **Z-Image** | 50 | 1.3x | ✅ | 12 | 5 |
+| **Z-Image-Turbo** | 9 | 1.5x | ✅ | 3 | 2 |
+| **Qwen-Image-2512** | 50 | 1.4-1.6x | ✅ | 5 | 3 |
+| **LTX-2 T2V** | 20 | 2.0x | ✅ | 6 | 4 |
+| **LTX-2 I2V** | 20 | 2.0x | ✅ | 6 | 4 |
+| **WAN2.2 14B T2V** | 20 | 1.67x | ✅ | 4 | 2 |
+| **WAN2.2 14B I2V** | 20 | 1.67x | ✅ | 4 | 2 |
+
+</div>
 
 ## Installation
 
@@ -79,12 +84,16 @@ git clone https://github.com/Jasonzzt/ComfyUI-CacheDiT.git
 
 ### Node Parameters
 
+<div align="center">
+
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `model` | MODEL | - | Input model (required) |
 | `enable` | Boolean | True | Enable/disable acceleration |
 | `model_type` | Combo | Auto | Auto-detect or select preset |
 | `print_summary` | Boolean | True | Show performance dashboard |
+
+</div>
 
 **That's it!** All technical parameters (threshold, fn_blocks, warmup, etc.) are automatically configured based on your model type.
 
